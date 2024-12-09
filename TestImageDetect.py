@@ -8,7 +8,7 @@ from ultralytics import YOLO
 model = YOLO("yolov8n.pt")
 
 # カメラの初期化
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("Camera not connected")
     exit()
