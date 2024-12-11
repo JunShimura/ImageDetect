@@ -2,6 +2,9 @@ import cv2
 import time
 import torch
 from ultralytics import YOLO
+import sys
+print("Python executable:", sys.executable)
+print("Python version:", sys.version)
 
 # モデルの読み込み
 #model = YOLO("best.pt")

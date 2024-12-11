@@ -4,7 +4,6 @@ import tkinter as tk
 from tkinter import scrolledtext
 from ultralytics import YOLO
 import threading
-
 # static global
 # YOLOモデルをロード
 model = YOLO("best.pt")  # トレーニング済みモデルを指定
