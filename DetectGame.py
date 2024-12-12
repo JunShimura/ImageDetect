@@ -2,6 +2,10 @@ import cv2
 import time
 from ultralytics import YOLO
 
+import sys
+print("Python executable:", sys.executable)
+print("Python version:", sys.version)
+
 # static global
 # YOLOモデルをロード
 model = YOLO("best.pt")  # トレーニング済みモデルを指定
