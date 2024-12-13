@@ -71,14 +71,14 @@ def calculate_score(objects, frame):
 
         # バウンディングボックスの色をスコアに応じて設定
         if total > 50:
-            color = (0, 0, 255)  # 赤 (高得点)
+            color = (int(min(255,total*2)), 125, 125)  # 赤 (高得点)
         else:
-            color = (0, 255, 0)  # 緑 (低得点)
+            color = (100, int(min(255,total*2)), 100)  # 緑 (低得点)
 
         # バウンディングボックスとラベルをフレームに描画
         x1, y1, x2, y2 = map(int, bbox)
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-        cv2.putText(frame, f"{label} ({int(total)}pts)", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        cv2.putText(frame, f"{label} ({int(total)}pts)", (int((x1+x2)/2), int((y1+y2)/2 - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
 def main():
     # カメラの取得を試みる
