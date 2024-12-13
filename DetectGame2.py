@@ -78,11 +78,7 @@ def calculate_score(objects, frame):
         # バウンディングボックスとラベルをフレームに描画
         x1, y1, x2, y2 = map(int, bbox)
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-
-        # スコアをバウンディングボックスの中央に表示
-        center_x = x1 + (x2 - x1) // 2
-        center_y = y1 + (y2 - y1) // 2
-        cv2.putText(frame, f"{int(total)}pts", (center_x, center_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        cv2.putText(frame, f"{label} ({int(total)}pts)", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
 def main():
     # カメラの取得を試みる
