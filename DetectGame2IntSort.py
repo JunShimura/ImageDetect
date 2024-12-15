@@ -116,9 +116,7 @@ def display_scores(scores, frame):
             colorEscape = Colors.BG_BLUE
         else:
             colorEscape = Colors.BG_CYAN
-        print(f"{colorEscape}")
-        print(f"{label} (信頼度: {confidence:.2f}, 面積: {area:.0f}) -> 加点: {int(total)}")
-        print(f"{Colors.RESET}")
+        print_colored(colorEscape,f"{label} (信頼度: {confidence:.2f}, 面積: {area:.0f}) -> 加点: {int(total)}")
 
         # バウンディングボックスとラベルをフレームに描画
         x1, y1, x2, y2 = map(int, bbox)
@@ -126,6 +124,7 @@ def display_scores(scores, frame):
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
         cv2.putText(frame, f"{label} ({int(total)}pts)", (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        cv2.waitKey(10)
 
 
 def display_sorted_scores(scores, frame):
