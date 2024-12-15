@@ -27,9 +27,12 @@ class Colors:
 	BG_DEFAULT     = '\033[49m'#背景色をデフォルトに戻す
 	RESET          = '\033[0m'#全てリセット
 
+def print_colored(color,str):
+    print(f"{color}{str}{Colors.RESET}")
+
 import sys
-print("Python executable:", sys.executable)
-print("Python version:", sys.version)
+print_colored(Colors.BLUE, f"Python executable:{sys.executable}" )
+print_colored(Colors.GREEN, f"Python version:{sys.version}")
 
 # static global
 # YOLOモデルをロード
