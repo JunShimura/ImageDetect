@@ -2,7 +2,7 @@ import cv2
 import time
 from ultralytics import YOLO
 
-import ColorEscape as ce # local unofficial
+import ColorEscape as ce  # local unofficial
 
 import sys
 ce.print_colored(ce.Colors.BLUE, f"Python executable:{sys.executable}" )
@@ -17,6 +17,14 @@ time_limit = 30  # 制限時間 (秒)
 score = 0  # 初期スコア
 all_scores = []  # 全てのスコアを格納するリスト
 
+
+COLOR_MAPPING = [
+    (0, ce.Colors.BG_RED, (0, 0, 255)),
+    (25, ce.Colors.BG_YELLOW, (0, 255, 255)),
+    (50, ce.Colors.BG_GREEN, (0, 255, 0)),
+    (75, ce.Colors.BG_BLUE, (255, 0, 0)),
+    (float('inf'), ce.Colors.BG_CYAN, (255, 255, 0))
+]
 
 def get_camera():
     """
@@ -77,28 +85,22 @@ def calculate_score(objects):
     return scores
 
 
+def get_color_and_box(total_score):
+    """スコアに応じた色とボックスカラーを返す"""
+    for threshold, color_escape, box_color in COLOR_MAPPING:
+        if total_score < threshold:
+            return color_escape, box_color
+    return ce.Colors.BG_WHITE, (255, 255, 255)  # Default fallback
+
+
 def display_scores(scores, frame):
     """スコアを表示し、バウンディングボックスを同期して描画"""
     for label, confidence, area, total, bbox in scores:
-        if total < 0:
-            colorEscape = ce.Colors.BG_RED
-            box_color = (0, 0, 255)  # Red
-        elif total < 25:
-            colorEscape = ce.Colors.BG_YELLOW
-            box_color = (0, 255, 255)  # Yellow
-        elif total < 50:
-            colorEscape = ce.Colors.BG_GREEN
-            box_color = (0, 255, 0)  # Green
-        elif total < 75:
-            colorEscape = ce.Colors.BG_BLUE
-            box_color = (255, 0, 0)  # Blue
-        else:
-            colorEscape = ce.Colors.BG_CYAN
-            box_color = (255, 255, 0)  # Cyan
+        color_escape, box_color = get_color_and_box(total)
 
         # ラベルをコンソールに表示
         ce.print_colored(
-            colorEscape,
+            color_escape,
             f"{label} (信頼度: {confidence:.2f}, 面積: {area:05.0f}) -> 加点: {total:03}"
         )
 
@@ -115,16 +117,13 @@ def display_countdown(frame, countdown_time):
     """カウントダウンを画面中央に表示する"""
     height, width, _ = frame.shape
     center_x, center_y = width // 2, height // 2
-    # temp_frame = frame.copy()
     cv2.putText(frame, str(countdown_time), (center_x - 50, center_y),
-        cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 5)
-    # cv2.imshow("Game", temp_frame) 
+                cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 5)
 
 def display_sorted_scores(scores, frame):
     """スコアを昇順でソートして表示"""
     sorted_scores = sorted(scores, key=lambda x: x[3])  # スコアでソート
     display_scores(sorted_scores, frame)
-
 
 def main():
     # カメラの取得を試みる
@@ -149,11 +148,11 @@ def main():
         if not ret:
             print("カメラ映像を取得できませんでした。")
             break
-        
-        cd = 5-int(time.time() - last_score_time)
-        
+
+        cd = 5 - int(time.time() - last_score_time)
+
         # 5秒ごとにスコアを計算
-        if cd<= 0:
+        if cd <= 0:
             objects = detect_objects(frame)
             frame_scores = calculate_score(objects)
             all_scores.extend(frame_scores)
@@ -171,7 +170,7 @@ def main():
 
             last_score_time = time.time()
         else:
-            display_countdown(frame,cd)
+            display_countdown(frame, cd)
         # フレームを表示（オプション）
         cv2.imshow("Game", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -208,22 +207,21 @@ def main():
     cv2.waitKey(250)
     ce.print_colored(ce.Colors.BG_CYAN, f"最大信頼度: {max_conf:.2f}")
     cv2.waitKey(500)
-    ce.print_colored(ce.Colors.BG_RED,f"最小面積: {min_area:05.0f}")
+    ce.print_colored(ce.Colors.BG_RED, f"最小面積: {min_area:05.0f}")
     cv2.waitKey(250)
     ce.print_colored(ce.Colors.BG_CYAN, f"最大面積: {max_area:05.0f}")
     cv2.waitKey(500)
-    ce.print_colored(ce.Colors.BG_RED,f"最小加点: {min_score:03}")
+    ce.print_colored(ce.Colors.BG_RED, f"最小加点: {min_score:03}")
     cv2.waitKey(250)
     ce.print_colored(ce.Colors.BG_CYAN, f"最大加点: {max_score:03}")
     cv2.waitKey(500)
-    ce.print_colored(ce.Colors.BG_GREEN,f"認識したオブジェクト数: {object_count}")
+    ce.print_colored(ce.Colors.BG_GREEN, f"認識したオブジェクト数: {object_count}")
 
     cv2.waitKey(500)
     ce.print_colored(ce.Colors.REVERCE, "最終スコアの合計:")
     ce.print_colored(ce.Colors.REVERCE, f"{final_total_score}")
     cv2.waitKey(500)
-    
-    
+
     cap.release()
     cv2.destroyAllWindows()
 
