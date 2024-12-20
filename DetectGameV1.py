@@ -113,7 +113,7 @@ def display_scores(scores, frame):
         # フレームを表示
         cv2.imshow("Game", frame)
         ps.play_note(note)
-        cv2.waitKey(50)
+        cv2.waitKey(10)
 
 def display_countdown(frame, countdown_time):
     """カウントダウンを画面中央に表示する"""
